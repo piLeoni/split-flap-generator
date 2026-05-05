@@ -1,0 +1,62 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+    themes: lemonade --default, dark --prefersdark, light;
+}
+
+/* Inline SVG from SplitFlap: let it scale inside the card */
+.preview-svg svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.three-host {
+    min-height: 22rem;
+    height: min(50vh, 28rem);
+}
+
+.settings-grid {
+    @apply grid grid-cols-1 gap-3 sm:grid-cols-2;
+}
+
+.settings-grid .form-control {
+    @apply w-full;
+}
+
+/* Stock-ish panels: soft lift + light edge (Daisy card feel without extra markup) */
+.preview-panel {
+    @apply rounded-box border border-base-300/80 bg-base-200/90 p-4 shadow-lg;
+}
+
+.intro {
+    @apply text-sm leading-relaxed text-base-content/80;
+}
+
+/* Indeterminate bar (3D mesh — no real progress % on main thread) */
+@keyframes web-indeterminate-slide {
+    0% {
+        transform: translateX(-105%);
+    }
+    100% {
+        transform: translateX(280%);
+    }
+}
+
+.web-indeterminate-bar {
+    position: relative;
+    height: 0.45rem;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 9999px;
+    background: color-mix(in oklch, currentColor 14%, transparent);
+}
+
+.web-indeterminate-bar::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 36%;
+    border-radius: 9999px;
+    background: color-mix(in oklch, currentColor 45%, transparent);
+    animation: web-indeterminate-slide 1.1s ease-in-out infinite;
+}

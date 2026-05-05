@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+      "ignoreDeprecations": "6.0",
+      "target": "ESNext",
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext",
+      "declaration": true,
+      "emitDeclarationOnly": true,
+      "strict": true,
+      "skipLibCheck": true,
+      "esModuleInterop": true,
+      "isolatedModules": true,
+      "jsx": "react-jsx"
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "examples/node/**/*.ts",
+        "examples/node/**/*.tsx"
+    ]
+  }

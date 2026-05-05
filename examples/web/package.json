@@ -1,0 +1,26 @@
+{
+    "name": "split-flap-web-demo",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "jotai": "^2.19.1",
+        "split-flap-generator": "file:../..",
+        "three": "^0.175.0"
+    },
+    "devDependencies": {
+        "@preact/preset-vite": "^2.10.2",
+        "@tailwindcss/vite": "^4.2.4",
+        "@types/three": "^0.175.0",
+        "daisyui": "^5.5.19",
+        "monaco-editor": "^0.55.1",
+        "preact": "^10.26.5",
+        "tailwindcss": "^4.2.4",
+        "typescript": "^5.8.3",
+        "vite": "^6.3.5"
+    }
+}

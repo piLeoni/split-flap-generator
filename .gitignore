@@ -1,0 +1,11 @@
+node_modules
+# Root library build only (`dist` alone would also match `examples/web/dist` and break Pages deploy tools that honor .gitignore).
+/dist/
+/examples/web/dist/
+out
+
+# Declarations emitted beside sources when running `tsc` (library output uses tsup → dist/)
+src/**/*.d.ts
+examples/**/*.d.ts
+
+.DS_Store

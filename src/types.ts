@@ -1,0 +1,18 @@
+export type {
+    FlapStyle,
+    FlapContent,
+    FlapContentInput,
+    FlapsOptions,
+    FlapPathData,
+    FlapProductionResult,
+    FlapRenderResult,
+    FontStyle,
+    PaintedPathSegment,
+    TextFlapContent,
+    HtmlFlapContent,
+    SvgFlapContent,
+    SatoriElementChild,
+    SatoriElementNode,
+    SatoriFontOption,
+    SatoriFontWeight,
+} from "./core/types.js";

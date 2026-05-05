@@ -1,0 +1,71 @@
+{
+  "name": "split-flap-generator",
+  "version": "1.0.1",
+  "description": "Mechanical split-flap tiles: CanvasKit + Satori to clipped SVG, 2D production sheets, and JSCAD OBJ/MTL.",
+  "keywords": [
+    "split-flap",
+    "splitflap",
+    "satori",
+    "svg",
+    "canvaskit",
+    "mechanical-display",
+    "flap",
+    "jscad",
+    "obj"
+  ],
+  "author": "piLeoni",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/piLeoni/split-flap-generator.git"
+  },
+  "homepage": "https://pileoni.github.io/split-flap-generator/",
+  "bugs": {
+    "url": "https://github.com/piLeoni/split-flap-generator/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
+    "test": "tsc && tsx examples/node/run.tsx",
+    "preweb:dev": "npm install --no-audit --no-fund --prefix examples/web",
+    "web:dev": "npm run dev --prefix examples/web",
+    "preweb:build": "npm install --no-audit --no-fund --prefix examples/web",
+    "web:build": "npm run build --prefix examples/web",
+    "web:build:pages": "VITE_BASE_PATH=/split-flap-generator/ npm run build --prefix examples/web",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
+    "react": "^19.2.5",
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@jscad/modeling": "^2.13.0",
+    "@jscad/obj-serializer": "^2.1.23",
+    "canvaskit-wasm": "^0.41.1",
+    "cheerio": "^1.2.0",
+    "clipper2-js": "^1.2.4",
+    "domhandler": "^6.0.1",
+    "satori": "^0.26.0",
+    "svg-pathdata": "^8.0.0"
+  }
+}
