@@ -70,9 +70,9 @@ export const charsetAtom = atomWithStorage(`${PREFIX}:charset`, DEFAULT_CHARSET,
 
 export const tileAtom = atomWithStorage(`${PREFIX}:tile`, { ...DEFAULT_TILE }, tileMmStorage, storageOpts);
 
-export const flapThicknessAtom = atomWithStorage(`${PREFIX}:flapThickness`, 0.75, undefined, storageOpts);
+export const flapThicknessAtom = atomWithStorage(`${PREFIX}:flapThickness`, 0.8, undefined, storageOpts);
 
-export const embossDepthAtom = atomWithStorage(`${PREFIX}:embossDepth`, 0.375, undefined, storageOpts);
+export const embossDepthAtom = atomWithStorage(`${PREFIX}:embossDepth`, 0.4, undefined, storageOpts);
 
 export const gridGapAtom = atomWithStorage(`${PREFIX}:gridGap`, 2, undefined, storageOpts);
 

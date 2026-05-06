@@ -48,6 +48,8 @@ export class SplitFlap {
         this.CK = await InitCanvasKit(canvasKitInit);
         this.options = {
             ...input,
+            flapThickness: input.flapThickness ?? 0.8,
+            embossDepth: input.embossDepth ?? 0.4,
             style: normalizeStyle(input.style),
         };
         this.fonts.setGoogleFontsCssBaseUrl(input.googleFontsCssBaseUrl);

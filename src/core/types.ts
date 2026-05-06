@@ -17,9 +17,9 @@ export interface FlapsOptions {
      */
     googleFontsCssBaseUrl?: string;
     defaultFonts?: string[];
-    /** Millimetres — defaults for `generateProductionFlaps3D()` when you omit that argument (or override per call). */
+    /** Millimetres — defaults to `0.8` and is used by `generateProductionFlaps3D()` when omitted per call. */
     flapThickness?: number;
-    /** Millimetres — emboss / relief depth (half-depth per side in the 3D pipeline). */
+    /** Millimetres — defaults to `0.4` and is used by `generateProductionFlaps3D()` when omitted per call. */
     embossDepth?: number;
     /** Millimetres — lateral XY separation used by 3D content insert solids. */
     internalXYClearanceMm?: number;

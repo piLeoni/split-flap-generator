@@ -92,8 +92,8 @@ async function populateFlaps(sf: SplitFlap, assets: { cardSvg: string }): Promis
 export async function buildDemoArtifacts(sf: SplitFlap, assets: { cardSvg: string }): Promise<DemoArtifacts> {
     await sf.init({
         ...FLAPS,
-        flapThickness: 0.75,
-        embossDepth: 0.75 / 2,
+        flapThickness: 0.8,
+        embossDepth: 0.4,
     });
     await populateFlaps(sf, assets);
 
@@ -117,8 +117,8 @@ export async function buildCharsetProduction(): Promise<CharsetProductionArtifac
     const sf = new SplitFlap();
     await sf.init({
         ...FLAPS,
-        flapThickness: 0.75,
-        embossDepth: 0.75 / 2,
+        flapThickness: 0.8,
+        embossDepth: 0.4,
     });
     for (const ch of PRODUCTION_CHARSET.split("")) {
         await sf.createFLAP({ textContent: ch });

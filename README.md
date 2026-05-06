@@ -41,8 +41,8 @@ const geometry = {
 const sf = new SplitFlap();
 await sf.init({
   ...geometry,
-  flapThickness: 0.75,
-  embossDepth: 0.375,
+  flapThickness: 0.8,
+  embossDepth: 0.4,
 });
 
 for (const ch of " ABCDE") {
@@ -51,7 +51,14 @@ for (const ch of " ABCDE") {
 
 const previewSvg = sf.generateFlapsPreview({ cols: 8, gap: 2 });
 const sheets2d = sf.generateProductionFlaps2D({ cols: 5, rows: 5, gap: 2 });
-const sheets3d = sf.generateProductionFlaps3DGrid({ cols: 5, rows: 5, gap: 2, meshNamePrefix: "demo" });
+const sheets3d = sf.generateProductionFlaps3DGrid({
+  cols: 5,
+  rows: 5,
+  gap: 2,
+  meshNamePrefix: "demo",
+  internalXYClearanceMm: 0.05, // optional; default 0.05
+  internalZClearanceMm: 0, // optional; default 0
+});
 
 const templateSvg = generateFlapSvgTemplate(geometry);
 ```
@@ -113,6 +120,11 @@ The renderer uses Satori and loads fonts from Google Fonts as needed.
 - `generateProductionFlaps3D(...)`
 - `generateProductionFlaps3DGrid(...)`
 - `generateProductionFlaps3DExport(...)`
+
+Optional 3D clearance controls are available on init/export inputs:
+
+- `internalXYClearanceMm` (default `0.05`): small lateral gap between flap pockets and inserted content solids.
+- `internalZClearanceMm` (default `0`): optional vertical gap from pocket floor while keeping top surface alignment.
 
 ![3D](assets/readme/3d_charset.png)
 
