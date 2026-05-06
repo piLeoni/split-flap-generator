@@ -31,6 +31,8 @@ const MIN_RING_POINTS = 3;
 const PX_PER_MM = 96 / 25.4;
 const OBJ_EXPORT_SCALE = 0.001;
 const CUT_SAFETY_MARGIN_MM = 0.02;
+const DEFAULT_INTERNAL_XY_CLEARANCE_MM = 0.05;
+const DEFAULT_INTERNAL_Z_CLEARANCE_MM = 0;
 
 export const FLAP_FACE_LAYER_ORDER = ["topFlap", "topContent", "bottomFlap", "bottomContent"] as const;
 export type FlapFaceLayerKey = (typeof FLAP_FACE_LAYER_ORDER)[number];
@@ -39,6 +41,10 @@ export type GenerateFlap3DInput = {
     faceSvg: string;
     flapThickness: number;
     embossDepth: number;
+    /** Millimetres — lateral XY separation between flap pockets and content solids. Default `0.05`. */
+    internalXYClearanceMm?: number;
+    /** Millimetres — optional bottom-side Z gap inside each pocket while keeping visible surface flush. Default `0`. */
+    internalZClearanceMm?: number;
     /** File name prefix; OBJ/MTL stems are `${meshName}_full`. Default `mesh`. */
     meshName?: string;
 };
@@ -404,12 +410,16 @@ function subtractHoleRing(base: Geom2, holeRing: [number, number][]): Geom2 {
     for (const revOuter of [false, true]) {
         const outer = revOuter ? (geom2.reverse(base) as Geom2) : base;
         for (const revHole of [false, true]) {
-            let hole = geom2.fromPoints(holeRing) as Geom2;
-            if (revHole) hole = geom2.reverse(hole) as Geom2;
-            const out = subtract(outer, hole) as Geom2;
-            if (out.sides.length === 0) continue;
-            if (geom2.toOutlines(out).length >= 2) return out;
-            fallback ??= out;
+            try {
+                let hole = geom2.fromPoints(holeRing) as Geom2;
+                if (revHole) hole = geom2.reverse(hole) as Geom2;
+                const out = subtract(outer, hole) as Geom2;
+                if (out.sides.length === 0) continue;
+                if (geom2.toOutlines(out).length >= 2) return out;
+                fallback ??= out;
+            } catch {
+                // Offset-derived rings can produce non-closed intermediates; try next orientation.
+            }
         }
     }
     return fallback ?? base;
@@ -522,29 +532,57 @@ export function collectFlap3DFullMeshGeoms(input: GenerateFlap3DInput): Geom3[] 
     const bottom = buildContentVisibility(paths, flapSvgClass.bottomContent);
     const half = input.flapThickness / 2;
     const emboss = input.embossDepth;
+    const xyClearance = Math.max(0, input.internalXYClearanceMm ?? DEFAULT_INTERNAL_XY_CLEARANCE_MM);
+    const zClearance = Math.max(0, input.internalZClearanceMm ?? DEFAULT_INTERNAL_Z_CLEARANCE_MM);
+    const contentDepth = Math.max(0, emboss - zClearance);
+    const xyInsetForContent = xyClearance / 2;
     const topFlapColor = rgba01FromFill(top.flapFill) ?? undefined;
     const bottomFlapColor = rgba01FromFill(bottom.flapFill) ?? undefined;
 
     const topFlap3dRaw = extrudeParts(top.flapGeoms, half, 0, topFlapColor);
     const bottomFlap3dRaw = extrudeParts(bottom.flapGeoms, -half, 0, bottomFlapColor);
-    const topFlapOwnCut = cutPocketFromFlap(topFlap3dRaw, top.cutFootprint, emboss, half - emboss, topFlapColor);
-    const bottomFlapOwnCut = cutPocketFromFlap(bottomFlap3dRaw, bottom.cutFootprint, -emboss, emboss - half, bottomFlapColor);
+    const topFlapOwnCut = cutPocketFromFlap(
+        topFlap3dRaw,
+        top.cutFootprint,
+        emboss,
+        half - emboss,
+        topFlapColor,
+        xyInsetForContent,
+    );
+    const bottomFlapOwnCut = cutPocketFromFlap(
+        bottomFlap3dRaw,
+        bottom.cutFootprint,
+        -emboss,
+        emboss - half,
+        bottomFlapColor,
+        xyInsetForContent,
+    );
     const crossesCenter = emboss > half;
     const topFlap3d = crossesCenter
-        ? cutPocketFromFlap(topFlapOwnCut, bottom.cutFootprint, -emboss, emboss - half, topFlapColor)
+        ? cutPocketFromFlap(topFlapOwnCut, bottom.cutFootprint, -emboss, emboss - half, topFlapColor, xyInsetForContent)
         : topFlapOwnCut;
     const bottomFlap3d = crossesCenter
-        ? cutPocketFromFlap(bottomFlapOwnCut, top.cutFootprint, emboss, half - emboss, bottomFlapColor)
+        ? cutPocketFromFlap(bottomFlapOwnCut, top.cutFootprint, emboss, half - emboss, bottomFlapColor, xyInsetForContent)
         : bottomFlapOwnCut;
 
     const mergedTopVisible = mergeVisiblePiecesByFill(top.visiblePieces);
     const mergedBottomVisible = mergeVisiblePiecesByFill(bottom.visiblePieces);
 
     const topContent3d = mergedTopVisible.flatMap((piece) =>
-        extrudeParts(piece.geoms, emboss, half - emboss, rgba01FromFill(piece.fill) ?? undefined),
+        extrudeParts(
+            insetGeoms(piece.geoms, xyInsetForContent),
+            contentDepth,
+            half - contentDepth,
+            rgba01FromFill(piece.fill) ?? undefined,
+        ),
     );
     const bottomContent3d = mergedBottomVisible.flatMap((piece) =>
-        extrudeParts(piece.geoms, -emboss, emboss - half, rgba01FromFill(piece.fill) ?? undefined),
+        extrudeParts(
+            insetGeoms(piece.geoms, xyInsetForContent),
+            -contentDepth,
+            contentDepth - half,
+            rgba01FromFill(piece.fill) ?? undefined,
+        ),
     );
     const mergedFlapsByMaterial = mergeSolidsByMaterial([...topFlap3d, ...bottomFlap3d]);
     const mergedContentByMaterial = mergeSolidsByMaterial([...topContent3d, ...bottomContent3d]);
@@ -635,6 +673,12 @@ function mergeVisiblePiecesByFill(pieces: VisiblePiece[]): Array<{ geoms: Geom2[
     return merged;
 }
 
+function insetGeoms(parts: Geom2[], insetMm: number): Geom2[] {
+    if (parts.length === 0 || insetMm === 0) return parts;
+    const insetPaths = offsetPaths(geomsToPaths64(parts), -Math.abs(insetMm));
+    return geomsFromPaths64(insetPaths);
+}
+
 function rgbaFromGeom3(g: Geom3): Rgba | null {
     const c = (g as Geom3 & { color?: unknown }).color;
     if (!Array.isArray(c) || c.length < 3) return null;
@@ -686,10 +730,11 @@ function cutPocketFromFlap(
     depthMm: number,
     translateZMm: number,
     flapColor?: [number, number, number, number],
+    lateralGapMm = 0,
 ): Geom3[] {
     if (flaps.length === 0 || cut2d.length === 0 || depthMm === 0) return flaps;
     const cutPaths = geomsToPaths64(cut2d);
-    const expandedCutPaths = offsetPaths(cutPaths, CUT_SAFETY_MARGIN_MM);
+    const expandedCutPaths = offsetPaths(cutPaths, CUT_SAFETY_MARGIN_MM + Math.max(0, lateralGapMm));
     const expandedCut2d = geomsFromPaths64(expandedCutPaths);
     const pockets = extrudeParts(expandedCut2d, depthMm, translateZMm);
     if (pockets.length === 0) return flaps;

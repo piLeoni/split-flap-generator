@@ -1,6 +1,6 @@
 {
   "name": "split-flap-generator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Mechanical split-flap tiles: CanvasKit + Satori to clipped SVG, 2D production sheets, and JSCAD OBJ/MTL.",
   "keywords": [
     "split-flap",

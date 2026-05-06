@@ -21,6 +21,10 @@ export interface FlapsOptions {
     flapThickness?: number;
     /** Millimetres — emboss / relief depth (half-depth per side in the 3D pipeline). */
     embossDepth?: number;
+    /** Millimetres — lateral XY separation used by 3D content insert solids. */
+    internalXYClearanceMm?: number;
+    /** Millimetres — optional Z separation from pocket floor for inserted 3D content. */
+    internalZClearanceMm?: number;
 }
 
 export interface TextFlapContent {
@@ -132,6 +136,8 @@ export type ProductionFaceCells2D = {
 export type ProductionFlap3d = {
     flapThickness: number;
     embossDepth: number;
+    internalXYClearanceMm?: number;
+    internalZClearanceMm?: number;
 }
 
 /** CSS `font-style` for Satori. */

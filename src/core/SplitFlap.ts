@@ -305,6 +305,8 @@ export class SplitFlap {
         if (!this.options) throw new Error("Options not set");
         const flapThickness = input.flapThickness ?? this.options.flapThickness;
         const embossDepth = input.embossDepth ?? this.options.embossDepth;
+        const internalXYClearanceMm = input.internalXYClearanceMm ?? this.options.internalXYClearanceMm;
+        const internalZClearanceMm = input.internalZClearanceMm ?? this.options.internalZClearanceMm;
         if (typeof flapThickness !== "number" || typeof embossDepth !== "number") {
             throw new Error(
                 "generateProductionFlaps3D: set flapThickness and embossDepth on init(options) or pass them to this method.",
@@ -314,6 +316,8 @@ export class SplitFlap {
         return meshesFromProductionFaceCells(face.cells, {
             flapThickness,
             embossDepth,
+            internalXYClearanceMm,
+            internalZClearanceMm,
             meshNamePrefix: "flap",
             cellW: face.cellW,
             cellH: face.cellH,
@@ -330,6 +334,8 @@ export class SplitFlap {
         if (!this.options) throw new Error("Options not set");
         const flapThickness = input.flapThickness ?? this.options.flapThickness;
         const embossDepth = input.embossDepth ?? this.options.embossDepth;
+        const internalXYClearanceMm = input.internalXYClearanceMm ?? this.options.internalXYClearanceMm;
+        const internalZClearanceMm = input.internalZClearanceMm ?? this.options.internalZClearanceMm;
         if (typeof flapThickness !== "number" || typeof embossDepth !== "number") {
             throw new Error(
                 "generateProductionFlaps3DGrid: set flapThickness and embossDepth on init(options) or pass them to this method.",
@@ -339,6 +345,8 @@ export class SplitFlap {
         return meshesGridFromProductionFaceCells(face.cells, {
             flapThickness,
             embossDepth,
+            internalXYClearanceMm,
+            internalZClearanceMm,
             gap: input.gap,
             cols: input.cols,
             rows: input.rows,
@@ -362,13 +370,15 @@ export class SplitFlap {
         if (!this.options) throw new Error("Options not set");
         const flapThickness = input.flapThickness ?? this.options.flapThickness;
         const embossDepth = input.embossDepth ?? this.options.embossDepth;
+        const internalXYClearanceMm = input.internalXYClearanceMm ?? this.options.internalXYClearanceMm;
+        const internalZClearanceMm = input.internalZClearanceMm ?? this.options.internalZClearanceMm;
         if (typeof flapThickness !== "number" || typeof embossDepth !== "number") {
             throw new Error(
                 "generateProductionFlaps3DExport: set flapThickness and embossDepth on init(options) or pass them to this method.",
             );
         }
         const face = this.getProductionFaceCells2D();
-        const slab = { flapThickness, embossDepth };
+        const slab = { flapThickness, embossDepth, internalXYClearanceMm, internalZClearanceMm };
         const cellParts = collectProductionFlaps3DCellParts(face.cells, slab, face.cellW, face.cellH);
         return {
             perFace: generateProductionFlaps3DFromCellParts(cellParts, input.meshNamePrefixPerFace ?? "flap"),

@@ -79,6 +79,8 @@ export function collectProductionFlaps3DCellParts(
             faceSvg,
             flapThickness: slab.flapThickness,
             embossDepth: slab.embossDepth,
+            internalXYClearanceMm: slab.internalXYClearanceMm,
+            internalZClearanceMm: slab.internalZClearanceMm,
         }),
     );
 }
@@ -145,6 +147,8 @@ export function generateProductionFlaps3D(
     const slab: ProductionFlap3d = {
         flapThickness: input.flapThickness,
         embossDepth: input.embossDepth,
+        internalXYClearanceMm: input.internalXYClearanceMm,
+        internalZClearanceMm: input.internalZClearanceMm,
     };
     const cellParts = collectProductionFlaps3DCellParts(cells, slab, input.cellW, input.cellH);
     return generateProductionFlaps3DFromCellParts(cellParts, input.meshNamePrefix ?? "flap");
@@ -162,6 +166,8 @@ export function generateProductionFlaps3DGrid(
     const slab: ProductionFlap3d = {
         flapThickness: input.flapThickness,
         embossDepth: input.embossDepth,
+        internalXYClearanceMm: input.internalXYClearanceMm,
+        internalZClearanceMm: input.internalZClearanceMm,
     };
     const cellParts = collectProductionFlaps3DCellParts(cells, slab, input.cellW, input.cellH);
     return generateProductionFlaps3DGridFromCellParts(cellParts, {
