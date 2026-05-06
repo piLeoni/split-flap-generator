@@ -412,9 +412,10 @@ export function App() {
                         >
                             GitHub
                         </a>
-                        ): This page is the web implementation of split-flap-generator, an open-source library for
-                        millimetre-accurate split-flap geometry, CanvasKit + Satori rendering, and export to 2D
-                        production SVG or optional OBJ/MTL meshes.
+                        ): This page is the web implementation of split-flap-generator, an open-source toolkit to
+                        design split-flap tiles, render content with CanvasKit + Satori, and export production-ready
+                        2D SVG sheets or 3D OBJ/MTL meshes. Through the npm package, you can also build more complex
+                        visual effects using HTML and SVG inputs, not just plain text.
                     </p>
                 </header>
 
